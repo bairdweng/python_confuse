@@ -1,12 +1,14 @@
 # -*- coding: UTF-8 -*-
 import os
 import re
-import InstercodeToFile
-import helper
 import shutil
 import sys
+
+import helper
+import InstercodeToFile
 import InstercodeToFunc
 import MyAES
+
 # 读取目录
 ys_pro_dir = '../confusionExample'
 if len(sys.argv) == 2:
@@ -120,12 +122,33 @@ def runTask(rootDir):
                 # 函数混淆
                 changeFuncName(pro_root_dir, classPath)
 
-                
+            # .h 跟 .m的处理
+            if '.h' in filename:
+                print("file_name",filename)
+                # 旧的名称
+                oldFileName = filename.replace('.h', '')
+                # 新的名称
+                newFileName = getClassName(oldFileName)
+                # 更改类名
+                changeClassName(pathname, oldFileName, newFileName)
+                # 更改工程
+                changeXcodepro(getXcodeprojPath(pro_root_dir),
+                               oldFileName, newFileName) 
+                # 更改其它类的调用。
+                changeFeference(pro_root_dir, oldFileName, newFileName)
+
+                # 混淆后插入OC类路径
+                classPath_h = rootDir + '/' + newFileName + '.h'
+                classPath_m = rootDir + '/' + newFileName + '.m'
+                # 函数名混淆OC
+                changeOCFuncName(pro_root_dir, classPath_h)                    
+                changeOCFuncName(pro_root_dir, classPath_m)
 
             # .png 跟 jpg的处理
             if '.png' in filename or '.jpg' in filename or '.jpeg' in filename:
                 print("更改图片md5："+filename)
                 changeMd5(pathname)
+              
         # 重新便利
         else:
             if canNextTastByPath(pathname) == False:
@@ -209,6 +232,35 @@ def changeFuncName(rootDir, filePath):
             except:
                   print("异常======",str)   
 
+# 混淆函数名OC
+def changeOCFuncName(rootDir, filePath):
+    try:  
+        with open(filePath, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+            for str in lines:
+                try:
+                    # 函数混淆
+                    if 'hx_' in str and ('-'  in str or '+' in str) and '{':
+                        # 截取OC的函数名
+                        if ':' in str:
+                            funcName = getmidstring(str,'h',':')
+                        else:
+                            funcName = getmidstring(str,'h',' ')   
+                        
+                        newFuncName = getFuncName(funcName)
+                        # print('函数混淆:' + funcName + '------------>' + newFuncName)
+                        changeFuncNameByPro(rootDir, funcName, newFuncName)
+                    # 变量混淆  判断行是否是属性或者变量  
+                    elif '@property' in str and 'hx_' in str:
+                        funcName = getmidstring(str,'h',';')
+                        newFuncName = getFuncName(funcName)
+                        # print('变量混淆:' + funcName + '------------>' + newFuncName)
+                        changeFuncNameByPro(rootDir, funcName, newFuncName)
+                except:
+                    print("异常======",str)  
+    except:
+        print("无法打开文件")                 
+
 
 def getmidstring(html, start_str, end):
     start = html.find(start_str)
@@ -223,7 +275,7 @@ def changeFuncNameByPro(rootDir, funcName, newFuncName):
     for filename in os.listdir(rootDir):
         pathname = os.path.join(rootDir, filename)
         if (os.path.isfile(pathname)):
-            if '.swift' in pathname or ".xib" in pathname:
+            if '.swift' in pathname or ".xib" in pathname or ".h" in pathname or ".m" in pathname:
                 content = ""
                 with open(pathname, "r", encoding="utf-8") as f:
                     content = f.read()
