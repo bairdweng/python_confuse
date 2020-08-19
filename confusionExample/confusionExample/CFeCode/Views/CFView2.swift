@@ -14,7 +14,7 @@ class CFView2: UIView {
         super.init(frame: frame)
         let hx_model = CFModel()
         hx_model.hx_1 = "1"
-        hx_model.hx_2 = "2"
+        hx_model.hx_hellow = "2"
         hx_initLabel2()
     }
     func hx_initLabel2() {

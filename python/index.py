@@ -19,10 +19,10 @@ pro_root_dir = ''
 pro_qz_str = helper.getRandomStrWithOption(2, -1).upper()
 
 # 过滤的类。
-filterClassNames = ['AppDelegate', 'ViewController']
+filterClassNames = ['AppDelegate', 'main']
 
 # 过滤的目录。
-filterClassDirs = ['Pods']
+filterClassDirs = ['Pods','OpenSource','Controllers']
 
 
 # 获取类名
@@ -91,13 +91,16 @@ def runTask(rootDir):
                 for fix in filterClassNames:
                     if filename == fix + '.swift':
                         isNext = False
-                # 当前的根目录。        
-                rootDir = os.path.dirname(pathname)
+
+                # 过滤加号命名的文件名
+                if "+" in filename:
+                    isNext = False
+
                 if isNext == False:
                     continue
-
-                oldFileName = filename.replace('.h', '')
-                oldFileName = oldFileName.replace('.swift', '')
+                # 当前的根目录。        
+                rootDir = os.path.dirname(pathname)
+                oldFileName = filename.replace('.swift', '')
 
                 newFileName = getClassName(oldFileName)
 
@@ -123,10 +126,27 @@ def runTask(rootDir):
                 changeFuncName(pro_root_dir, classPath)
 
             # .h 跟 .m的处理
-            if '.h' in filename:
-                print("file_name",filename)
+            if '.m' in filename:
+                # 过滤
+                isNext = True
+                for fix in filterClassNames:
+                    if filename == fix + '.m':
+                        isNext = False
+                # 过滤加号命名的文件名
+                if "+" in filename:
+                    isNext = False      
+                # 当前的根目录。        
+                rootDir = os.path.dirname(pathname)
+                # print("file_name",filename)
                 # 旧的名称
-                oldFileName = filename.replace('.h', '')
+                oldFileName = filename.replace('.m', '')
+                # 判断.h文件是否存在，只有h，m同时存在方可下一步
+                h_file_path = rootDir + '/' + oldFileName + '.h'
+                if os.path.isfile(h_file_path) == False:
+                    isNext = False           
+
+                if isNext == False:
+                    continue                         
                 # 新的名称
                 newFileName = getClassName(oldFileName)
                 # 更改类名
@@ -194,7 +214,7 @@ def changeClassName(pathname, oldFileName, newFileName):
         os.rename(oldPath + '.xib', newPath + '.xib')    
 
 
-# 更改工程依赖
+# 更改工程依赖 
 def changeXcodepro(proj_path, oldName, newName):
     with open(proj_path, "r", encoding="utf-8") as f:
         xcontent = f.read()
@@ -203,7 +223,7 @@ def changeXcodepro(proj_path, oldName, newName):
         xcontent = re.sub(r'\b' + oldName + r'.xib\b', newName + '.xib', xcontent)
         xcontent = re.sub(r'\b' + oldName + r'.swift\b',
                           newName + '.swift', xcontent)
-        print('混淆:' + oldName + '------------>' + newName)
+        # print('混淆:' + oldName + '------------>' + newName)
     with open(proj_path, "w", encoding="utf-8") as f:
         f.write(xcontent)
 
@@ -222,12 +242,13 @@ def changeFuncName(rootDir, filePath):
                     changeFuncNameByPro(rootDir, funcName, newFuncName)
                 # 变量混淆    
                 elif 'hx_' in str and ('var' in str or 'let' in str or 'typealias' in str):
-                    if '=' in str:
-                        funcName = getmidstring(str,'h','=')
-                    else:
+                    if ':' in str:
                         funcName = getmidstring(str,'h',':')
+                    else:
+                        funcName = getmidstring(str,'h','=')
+                    # funcName = getmidstring(str,'h',':')
                     newFuncName = getFuncName(funcName)
-                    # print('变量混淆:' + funcName + '------------>' + newFuncName)
+                    print('变量混淆:' + funcName + '------------>' + newFuncName)
                     changeFuncNameByPro(rootDir, funcName, newFuncName)
             except:
                   print("异常======",str)   
@@ -245,8 +266,9 @@ def changeOCFuncName(rootDir, filePath):
                         if ':' in str:
                             funcName = getmidstring(str,'h',':')
                         else:
-                            funcName = getmidstring(str,'h',' ')   
-                        
+                            funcName = getmidstring(str,'h','{')
+                        # 移除字符串空格
+                        funcName = funcName.strip()
                         newFuncName = getFuncName(funcName)
                         # print('函数混淆:' + funcName + '------------>' + newFuncName)
                         changeFuncNameByPro(rootDir, funcName, newFuncName)
@@ -254,7 +276,7 @@ def changeOCFuncName(rootDir, filePath):
                     elif '@property' in str and 'hx_' in str:
                         funcName = getmidstring(str,'h',';')
                         newFuncName = getFuncName(funcName)
-                        # print('变量混淆:' + funcName + '------------>' + newFuncName)
+                        print('变量混淆:' + funcName + '------------>' + newFuncName)
                         changeFuncNameByPro(rootDir, funcName, newFuncName)
                 except:
                     print("异常======",str)  
@@ -289,7 +311,7 @@ def changeFuncNameByPro(rootDir, funcName, newFuncName):
             changeFuncNameByPro(pathname, funcName, newFuncName)
 
 
-# 更改工程其它类的引用。
+# 更改工程其它类的引用。\b是单词边界 例如 example exampleTest文本，替换example 为 test 最终是 test exampleTest 而不是test testTest
 def changeFeference(rootDir, oldName, newName):
     for filename in os.listdir(rootDir):
         pathname = os.path.join(rootDir, filename)
@@ -301,11 +323,19 @@ def changeFeference(rootDir, oldName, newName):
                 with open(pathname, "r", encoding="utf-8") as f:
                     content = f.read()
                     content = re.sub(r'\b' + oldName + r'\b', newName, content)
+                    #OC中.h的处理
                     content = re.sub(r'\b' + oldName + '.h"' + r'\b', '"' + newName + '.h"', content)
+                    content = re.sub(r'\b_' + oldName, '_' + newName, content)
+                    # content = re.sub('','%s.h ' ,content)
+                    #OC中全局变量的处理例如属性example _example
+                    # content = re.sub('\\b%s\\b'%oldName,'\\b%s\\b'%newName,content)
+                    # content = re.sub('\\b_%s\\b'%oldName,'\\b_%s\\b'%newName,content)
                 with open(pathname, "w", encoding="utf-8") as f:
                     f.write(content)
         else:
-            if canNextTastByPath(pathname) == False:
+            # 这里过滤podfile
+            last_dir = getPathLastDir(pathname)
+            if last_dir == 'Pods':
                 continue
             changeFeference(pathname, oldName, newName)
 

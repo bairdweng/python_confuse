@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DA805AF724D2CEAD009B4496 /* Hello.m in Sources */ = {isa = PBXBuildFile; fileRef = DA805AF624D2CEAD009B4496 /* Hello.m */; };
+		DA389A8424EAA43C0017A9B6 /* NSObject+Hello.m in Sources */ = {isa = PBXBuildFile; fileRef = DA389A8324EAA43C0017A9B6 /* NSObject+Hello.m */; };
+		DA5C973E24EBC2A0005F0B43 /* Test.m in Sources */ = {isa = PBXBuildFile; fileRef = DA5C973D24EBC2A0005F0B43 /* Test.m */; };
 		DA86E6AE24500CD100F1742F /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA86E6AD24500CD100F1742F /* TestView.swift */; };
 		DAB93F27247B6EFD00E33335 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB93F26247B6EFD00E33335 /* Model.swift */; };
 		DAD82CC4244FFBE4008DE737 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD82CC3244FFBE4008DE737 /* AppDelegate.swift */; };
@@ -33,9 +34,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		DA389A8224EAA43C0017A9B6 /* NSObject+Hello.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+Hello.h"; sourceTree = "<group>"; };
+		DA389A8324EAA43C0017A9B6 /* NSObject+Hello.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Hello.m"; sourceTree = "<group>"; };
+		DA5C973C24EBC29F005F0B43 /* Test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Test.h; sourceTree = "<group>"; };
+		DA5C973D24EBC2A0005F0B43 /* Test.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test.m; sourceTree = "<group>"; };
 		DA805AF424D2CEAC009B4496 /* confusionExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "confusionExample-Bridging-Header.h"; sourceTree = "<group>"; };
-		DA805AF524D2CEAD009B4496 /* Hello.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Hello.h; sourceTree = "<group>"; };
-		DA805AF624D2CEAD009B4496 /* Hello.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Hello.m; sourceTree = "<group>"; };
 		DA86E6AD24500CD100F1742F /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
 		DAB93F26247B6EFD00E33335 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		DAD82CC0244FFBE4008DE737 /* confusionExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = confusionExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -73,6 +76,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DA389A7E24EAA3330017A9B6 /* OC */ = {
+			isa = PBXGroup;
+			children = (
+				DA389A8224EAA43C0017A9B6 /* NSObject+Hello.h */,
+				DA389A8324EAA43C0017A9B6 /* NSObject+Hello.m */,
+				DA5C973C24EBC29F005F0B43 /* Test.h */,
+				DA5C973D24EBC2A0005F0B43 /* Test.m */,
+			);
+			path = OC;
+			sourceTree = "<group>";
+		};
 		DAD82CB7244FFBE4008DE737 = {
 			isa = PBXGroup;
 			children = (
@@ -109,6 +123,7 @@
 		DAF89CF8247BC6F500847111 /* CFeCode */ = {
 			isa = PBXGroup;
 			children = (
+				DA389A7E24EAA3330017A9B6 /* OC */,
 				DAF89D01247BC76800847111 /* Model */,
 				DAF89D00247BC75600847111 /* ViewControllers */,
 				DAF89CFF247BC75000847111 /* Views */,
@@ -138,8 +153,6 @@
 				DAF89D09247BE89200847111 /* DataTableViewCell.xib */,
 				DAF89D0E247BEA8800847111 /* SubmitViewController.swift */,
 				DAF89D0F247BEA8800847111 /* SubmitViewController.xib */,
-				DA805AF524D2CEAD009B4496 /* Hello.h */,
-				DA805AF624D2CEAD009B4496 /* Hello.m */,
 				DA805AF424D2CEAC009B4496 /* confusionExample-Bridging-Header.h */,
 			);
 			path = ViewControllers;
@@ -234,12 +247,13 @@
 				DAF89D13247BEBF600847111 /* CFModel2.swift in Sources */,
 				DAF89CFA247BC73900847111 /* CFView.swift in Sources */,
 				DAF89D15247BECAD00847111 /* CFView2.swift in Sources */,
+				DA5C973E24EBC2A0005F0B43 /* Test.m in Sources */,
 				DAF89D06247BE4FC00847111 /* ViewController2.swift in Sources */,
 				DAF89D17247BECBC00847111 /* CFView3.swift in Sources */,
-				DA805AF724D2CEAD009B4496 /* Hello.m in Sources */,
 				DAF89D03247BC77E00847111 /* CFModel.swift in Sources */,
 				DA86E6AE24500CD100F1742F /* TestView.swift in Sources */,
 				DAD82CC8244FFBE4008DE737 /* ViewController.swift in Sources */,
+				DA389A8424EAA43C0017A9B6 /* NSObject+Hello.m in Sources */,
 				DAD82CC4244FFBE4008DE737 /* AppDelegate.swift in Sources */,
 				DAF89D0A247BE89200847111 /* DataTableViewCell.swift in Sources */,
 				DAF89D10247BEA8800847111 /* SubmitViewController.swift in Sources */,
